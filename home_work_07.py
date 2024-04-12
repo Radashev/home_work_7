@@ -1,6 +1,6 @@
 from collections import UserDict, defaultdict
 from datetime import datetime, timedelta
-
+import calendar
 
 class Field:
     def __init__(self, value):
@@ -36,9 +36,17 @@ class Birthday(Field):
         date_format = "%d.%m.%Y"  # Формат дати.
         try:
             self.date = datetime.strptime(value, date_format).date()  # Парсинг дати.
-            super().__init__(value)  # Виклик конструктора батьківського класу.
+            if not (self.date.month == 2 and self.date.day == 29):  # Перевірка на 29 лютого.
+                super().__init__(value) # Виклик конструктора батьківського класу.
+            else:
+                is_leap_year = calendar.isleap(self.date.year)
+                if is_leap_year:
+                    super().__init__(value)
+                else:
+                    raise ValueError("Invalid date format. Use DD.MM.YYYY") 
         except ValueError:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY")  # Виняток при неправильному форматі дати.
+            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+
 
 
 class Record:
